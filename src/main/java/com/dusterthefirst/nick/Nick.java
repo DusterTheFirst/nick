@@ -102,7 +102,10 @@ public class Nick extends JavaPlugin implements Listener {
                         + "'" + ChatColor.RED
                         + ". Change back to the previous nickname or ask an admin to update the nickname for the user "
                         + ChatColor.GOLD + "'" + uuid + "'");
+                return;
             }
+
+            player.setDisplayName(nickname);
         } else {
             event.disallow(Result.KICK_OTHER,
                     ChatColor.RED + "You have connected using an invalid hostname " + ChatColor.GOLD + "'" + hostname
