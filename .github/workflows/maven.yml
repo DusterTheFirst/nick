@@ -23,5 +23,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.1
       with:
-        name: nick.jar
+        name: plugin
         path: target/nick-1.0-SNAPSHOT.jar
