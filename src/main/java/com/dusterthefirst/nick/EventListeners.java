@@ -47,7 +47,7 @@ public class EventListeners implements Listener {
 
             String nickname = WordUtils.capitalize(hostname.replace(hostnamePostfix, "").replace("_", " "));
 
-            if (previousNickname == null) {
+            if (previousNickname == null || previousNickname.length() == 0) {
                 if (nicknames.exists(nickname)) {
                     plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'"
                             + ChatColor.RED + " has attempted to join with the nickname " + ChatColor.GOLD + "'"
@@ -55,6 +55,7 @@ public class EventListeners implements Listener {
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "The nickname " + ChatColor.GOLD
                             + "'" + nickname + "'" + ChatColor.RED
                             + " has already been taken by someone else. Choose another nickname or consult an admin");
+                    nicknames.set(uuid, "");
                     return;
                 }
                 nicknames.set(uuid, nickname);
