@@ -21,6 +21,8 @@ jobs:
                   key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
                   restore-keys: |
                       ${{ runner.os }}-maven-
+            - name: Set version
+              run: /bin/sed "s/\$\$BUILD_NUMBER\$\$/${{ github.run_number }}/" src/main/resources/plugin.yml
             - name: Build with Maven
               run: mvn -B package --file pom.xml
             - name: Create Release
