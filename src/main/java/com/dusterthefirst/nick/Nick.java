@@ -20,6 +20,8 @@ public class Nick extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        UpdateManager.checkForUpdate(this);
+
         saveDefaultConfig();
         nicknames.load();
 
