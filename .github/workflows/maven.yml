@@ -21,6 +21,12 @@ jobs:
                   key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
                   restore-keys: |
                       ${{ runner.os }}-maven-
+            - name: Declare some variables
+              id: vars
+              shell: bash
+              run: |
+                  echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+                  echo "::set-output name=date::$(date +%F)"
             - name: Build with Maven
               run: mvn -B package --file pom.xml
             - name: Create Release
@@ -29,8 +35,8 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tag_name: $(git rev-parse --short "$GITHUB_SHA")
-                  release_name: Release $(git rev-parse --short "$GITHUB_SHA")
+                  tag_name: ${{ steps.vars.outputs.date }}-${{ steps.vars.outputs.sha_short }}
+                  release_name: Release ${{ steps.vars.outputs.date }}-${{ steps.vars.outputs.sha_short }}
             - name: Upload a Build Artifact
               id: upload-release-asset
               uses: actions/upload-release-asset@v1
