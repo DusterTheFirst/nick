@@ -2,24 +2,22 @@ package com.dusterthefirst.nick;
 
 import java.util.UUID;
 
-import com.dusterthefirst.nick.config.NicknamesConfig;
-
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class EventListeners implements Listener {
     Nick plugin;
-    NicknamesConfig nicknames;
+    Players players;
 
-    public EventListeners(Nick plugin, NicknamesConfig nicknames) {
+    public EventListeners(Nick plugin, Players players) {
         this.plugin = plugin;
-        this.nicknames = nicknames;
+        this.players = players;
     }
 
     @EventHandler
@@ -43,41 +41,39 @@ public class EventListeners implements Listener {
 
         // Ensure the user is connecting using the right host
         if (hostname.endsWith(hostnamePostfix)) {
-            String previousNickname = nicknames.get(uuid);
+            PlayerInfo previousInfo = players.getInfo(uuid);
 
             String nickname = WordUtils.capitalize(hostname.replace(hostnamePostfix, "").replace("_", " "));
 
-            if (previousNickname == null || previousNickname.length() == 0) {
-                if (nicknames.exists(nickname)) {
+            if (previousInfo == null || previousInfo.nick.length() == 0) {
+                if (players.searchByNick(nickname) != null) {
                     plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'"
                             + ChatColor.RED + " has attempted to join with the nickname " + ChatColor.GOLD + "'"
                             + nickname + "'" + ChatColor.RED + " but the nickname has already been taken");
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.RED + "The nickname " + ChatColor.GOLD
                             + "'" + nickname + "'" + ChatColor.RED
                             + " has already been taken by someone else. Choose another nickname or consult an admin");
-                    nicknames.set(uuid, "");
+                    players.setInfo(uuid, new PlayerInfo(""));
                     return;
                 }
-                nicknames.set(uuid, nickname);
+                players.setInfo(uuid, new PlayerInfo(nickname));
 
                 String message = ChatColor.GREEN + "New player (" + ChatColor.YELLOW + username + ChatColor.GREEN
                         + ") joined with nickname: " + ChatColor.YELLOW + nickname;
 
                 plugin.broadcast(message);
-            } else if (!previousNickname.equals(nickname)) {
+            } else if (!previousInfo.nick.equals(nickname)) {
                 plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'"
                         + ChatColor.RED + " has attempted to join with the nickname " + ChatColor.GOLD + "'" + nickname
                         + "'" + ChatColor.RED + " which does not match their previous nickname " + ChatColor.GOLD + "'"
-                        + previousNickname + "'");
+                        + previousInfo.nick + "'");
                 event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
                         ChatColor.RED + "You have connected using the nickname " + ChatColor.GOLD + "'" + nickname + "'"
                                 + ChatColor.RED + " which does not match your previous nickname " + ChatColor.GOLD + "'"
-                                + previousNickname + "'" + ChatColor.RED
+                                + previousInfo.nick + "'" + ChatColor.RED
                                 + ". Change back to the previous nickname or ask an admin to update your nickname");
                 return;
             }
-
-            player.setDisplayName(nickname);
         } else {
             plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'" + ChatColor.RED
                     + " has attempted to join with the hostname " + ChatColor.GOLD + "'" + hostname + "'"
@@ -89,23 +85,53 @@ public class EventListeners implements Listener {
                             + "'<Your Nickname>" + hostnamePostfix + "'");
             return;
         }
+
+        PlayerInfo info = players.getInfo(uuid);
+        player.setDisplayName(info.getNicknameColored());
+        player.setPlayerListName(info.getNicknameColored());
+        // player.setCustomName(info.getNicknameColored());
+        // player.setCustomNameVisible(true);
+    }
+
+    // @EventHandler
+    // public void onPlayerChat(AsyncPlayerChatEvent event) {
+    // Player player = event.getPlayer();
+    // String nickname = nicknames.get(player.getUniqueId());
+
+    // if (nickname == null) {
+    // plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" +
+    // player.getName() + "'" + ChatColor.RED
+    // + " has no nickname.");
+
+    // Bukkit.getScheduler().runTask(plugin, () -> {
+    // player.kickPlayer(ChatColor.RED
+    // + "Please rejoin, the nickname plugin somehow has failed to register your
+    // user and requires that you log in again. Sorry for the inconvenience");
+    // });
+    // } else {
+    // player.setDisplayName(nickname);
+    // }
+    // }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        PlayerInfo info = players.getInfo(uuid);
+
+        if (info != null)
+            event.setJoinMessage(ChatColor.YELLOW + info.getNicknameColored() + ChatColor.YELLOW + " joined the game");
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        String nickname = nicknames.get(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
 
-        if (nickname == null) {
-            plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'" + ChatColor.RED
-                    + " has no nickname.");
+        PlayerInfo info = players.getInfo(uuid);
 
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                player.kickPlayer(ChatColor.RED
-                        + "Please rejoin, the nickname plugin somehow has failed to register your user and requires that you log in again. Sorry for the inconvenience");
-            });
-        } else {
-            player.setDisplayName(nickname);
-        }
+        if (info != null)
+            event.setQuitMessage(ChatColor.YELLOW + info.getNicknameColored() + ChatColor.YELLOW + " left the game");
     }
 }

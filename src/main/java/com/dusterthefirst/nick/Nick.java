@@ -1,14 +1,15 @@
 package com.dusterthefirst.nick;
 
-import com.dusterthefirst.nick.commands.ReloadNicknames;
-import com.dusterthefirst.nick.config.NicknamesConfig;
+import com.dusterthefirst.nick.commands.ReloadConfig;
+import com.dusterthefirst.nick.commands.Whois;
 
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /** The main class for the nick plugin. */
 public class Nick extends JavaPlugin {
-    NicknamesConfig nicknames = new NicknamesConfig(getDataFolder());
+    Players players = new Players(getDataFolder());
 
     public void broadcast(String s) {
         getLogger().info(s);
@@ -20,13 +21,16 @@ public class Nick extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        ConfigurationSerialization.registerClass(PlayerInfo.class);
+
         UpdateManager.checkForUpdate(this);
 
         saveDefaultConfig();
-        nicknames.load();
+        players.load();
 
-        getCommand("reload-nicknames").setExecutor(new ReloadNicknames(nicknames));
+        getCommand("reload-config").setExecutor(new ReloadConfig(this, players));
+        getCommand("whois").setExecutor(new Whois(this, players));
 
-        getServer().getPluginManager().registerEvents(new EventListeners(this, nicknames), this);
+        getServer().getPluginManager().registerEvents(new EventListeners(this, players), this);
     }
 }
