@@ -29,8 +29,6 @@ public class UpdateManager {
         try {
             Release latest = getLatestRelease();
 
-            plugin.getLogger().info(gson.toJson(latest));
-
             PluginDescriptionFile desc = plugin.getDescription();
             String version = desc.getVersion();
             String name = desc.getName();
