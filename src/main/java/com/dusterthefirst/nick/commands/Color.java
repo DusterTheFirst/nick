@@ -1,6 +1,7 @@
 package com.dusterthefirst.nick.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -19,6 +20,10 @@ import org.bukkit.util.StringUtil;
 public class Color implements TabExecutor {
     Players players;
     JavaPlugin plugin;
+    static final List<ChatColor> allowedChatColors = Arrays.asList(ChatColor.AQUA, ChatColor.BLACK, ChatColor.BLUE,
+            ChatColor.DARK_AQUA, ChatColor.DARK_BLUE, ChatColor.DARK_GRAY, ChatColor.DARK_GREEN, ChatColor.DARK_PURPLE,
+            ChatColor.DARK_RED, ChatColor.GOLD, ChatColor.GRAY, ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.RED,
+            ChatColor.WHITE, ChatColor.YELLOW);
 
     public Color(JavaPlugin plugin, Players players) {
         this.players = players;
@@ -33,7 +38,7 @@ public class Color implements TabExecutor {
 
         TreeSet<String> completions = new TreeSet<>();
 
-        for (ChatColor color : ChatColor.values()) {
+        for (ChatColor color : allowedChatColors) {
             completions.add(color.name().toLowerCase());
         }
 
@@ -56,9 +61,12 @@ public class Color implements TabExecutor {
 
         ChatColor color = ChatColor.valueOf(args[0].toUpperCase());
 
-        info.setColor(color);
-        info.applyTo(player);
-        // players.setInfo(uuid, info);
+        if ((new ArrayList<ChatColor>(allowedChatColors)).contains(color)) {
+            info.setColor(color);
+            info.applyTo(player);
+        } else {
+            sender.sendMessage("Invalid color");
+        }
 
         return true;
     }
