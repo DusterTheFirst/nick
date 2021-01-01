@@ -45,7 +45,12 @@ public class PlayerInfo implements ConfigurationSerializable {
 
     public PlayerInfo(Map<String, Object> map) {
         this.nick = (String) map.get("nick");
-        this.color = ChatColor.valueOf((String) map.get("color"));
+        String color = (String) map.get("color");
+        if (color == null) {
+            this.color = null;
+        } else {
+            this.color = ChatColor.valueOf(color);
+        }
     }
 
     public PlayerInfo valueOf(Map<String, Object> map) {
