@@ -23,7 +23,7 @@ public class Color implements TabExecutor {
     static final List<ChatColor> allowedChatColors = Arrays.asList(ChatColor.AQUA, ChatColor.BLACK, ChatColor.BLUE,
             ChatColor.DARK_AQUA, ChatColor.DARK_BLUE, ChatColor.DARK_GRAY, ChatColor.DARK_GREEN, ChatColor.DARK_PURPLE,
             ChatColor.DARK_RED, ChatColor.GOLD, ChatColor.GRAY, ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.RED,
-            ChatColor.WHITE, ChatColor.YELLOW);
+            ChatColor.WHITE, ChatColor.YELLOW, ChatColor.RESET);
 
     public Color(JavaPlugin plugin, Players players) {
         this.players = players;
