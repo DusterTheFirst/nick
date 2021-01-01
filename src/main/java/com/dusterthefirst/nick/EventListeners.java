@@ -87,10 +87,7 @@ public class EventListeners implements Listener {
         }
 
         PlayerInfo info = players.getInfo(uuid);
-        player.setDisplayName(info.getNicknameColored());
-        player.setPlayerListName(info.getNicknameColored());
-        // player.setCustomName(info.getNicknameColored());
-        // player.setCustomNameVisible(true);
+        info.applyTo(player);
     }
 
     // @EventHandler

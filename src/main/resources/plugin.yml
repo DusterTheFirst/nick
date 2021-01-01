@@ -11,3 +11,7 @@ commands:
         aliases: [who]
         description: Map nicknames to usernames and vice versa
         usage: /<command> <name>
+    color:
+        aliases: [c]
+        description: Set your display color
+        usage: /<command> <color>

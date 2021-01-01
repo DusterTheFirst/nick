@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 
 public class PlayerInfo implements ConfigurationSerializable {
     String nick;
@@ -15,8 +16,19 @@ public class PlayerInfo implements ConfigurationSerializable {
         this.color = null;
     }
 
+    public void applyTo(Player p) {
+        p.setDisplayName(getNicknameColored());
+        p.setPlayerListName(getNicknameColored());
+        // player.setCustomName(info.getNicknameColored());
+        // player.setCustomNameVisible(true);
+    }
+
     public void setColor(ChatColor color) {
-        this.color = color;
+        if (color == ChatColor.RESET) {
+            this.color = null;
+        } else {
+            this.color = color;
+        }
     }
 
     public String getNickname() {
@@ -25,15 +37,15 @@ public class PlayerInfo implements ConfigurationSerializable {
 
     public String getNicknameColored() {
         if (color != null) {
-            return color + getNickname();
+            return color + getNickname() + ChatColor.RESET;
         } else {
-            return getNickname();
+            return getNickname() + ChatColor.RESET;
         }
     }
 
     public PlayerInfo(Map<String, Object> map) {
         this.nick = (String) map.get("nick");
-        this.color = (ChatColor) map.get("color");
+        this.color = ChatColor.valueOf((String) map.get("color"));
     }
 
     public PlayerInfo valueOf(Map<String, Object> map) {
@@ -45,7 +57,12 @@ public class PlayerInfo implements ConfigurationSerializable {
         HashMap<String, Object> map = new HashMap<>();
 
         map.put("nick", nick);
-        map.put("color", color);
+
+        if (color == null) {
+            map.put("color", null);
+        } else {
+            map.put("color", color.name());
+        }
 
         return map;
     }

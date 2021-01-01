@@ -59,11 +59,7 @@ public class Players {
 
     public void setInfo(UUID uuid, PlayerInfo info) {
         config.set(uuid.toString(), info);
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     public void load() {
@@ -71,6 +67,14 @@ public class Players {
         try {
             config.load(file);
         } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void save() {
+        try {
+            config.save(file);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

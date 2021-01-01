@@ -1,5 +1,6 @@
 package com.dusterthefirst.nick;
 
+import com.dusterthefirst.nick.commands.Color;
 import com.dusterthefirst.nick.commands.ReloadConfig;
 import com.dusterthefirst.nick.commands.Whois;
 
@@ -30,7 +31,14 @@ public class Nick extends JavaPlugin {
 
         getCommand("reload-config").setExecutor(new ReloadConfig(this, players));
         getCommand("whois").setExecutor(new Whois(this, players));
+        getCommand("color").setExecutor(new Color(this, players));
 
         getServer().getPluginManager().registerEvents(new EventListeners(this, players), this);
+    }
+
+    @Override
+    public void onDisable() {
+        saveConfig();
+        players.save();
     }
 }

@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import com.dusterthefirst.nick.PlayerInfo;
 import com.dusterthefirst.nick.Players;
-import com.google.gson.Gson;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
