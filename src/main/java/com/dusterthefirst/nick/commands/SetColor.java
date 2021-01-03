@@ -6,26 +6,27 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import com.dusterthefirst.nick.NickPlugin;
 import com.dusterthefirst.nick.PlayerInfo;
 import com.dusterthefirst.nick.Players;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.StringUtil;
 
-public class Color implements TabExecutor {
+public class SetColor implements TabExecutor {
     Players players;
-    JavaPlugin plugin;
+    NickPlugin plugin;
+
     static final List<ChatColor> allowedChatColors = Arrays.asList(ChatColor.AQUA, ChatColor.BLACK, ChatColor.BLUE,
             ChatColor.DARK_AQUA, ChatColor.DARK_BLUE, ChatColor.DARK_GRAY, ChatColor.DARK_GREEN, ChatColor.DARK_PURPLE,
             ChatColor.DARK_RED, ChatColor.GOLD, ChatColor.GRAY, ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.RED,
             ChatColor.WHITE, ChatColor.YELLOW, ChatColor.RESET);
 
-    public Color(JavaPlugin plugin, Players players) {
+    public SetColor(NickPlugin plugin, Players players) {
         this.players = players;
         this.plugin = plugin;
     }
@@ -33,16 +34,18 @@ public class Color implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length != 1) {
-            return null;
+            return new ArrayList<>();
         }
 
         TreeSet<String> completions = new TreeSet<>();
 
         for (ChatColor color : allowedChatColors) {
-            completions.add(color.name().toLowerCase());
+            String colorName = color.name().toLowerCase();
+            if (colorName.contains(args[0]))
+                completions.add(colorName);
         }
 
-        return StringUtil.copyPartialMatches(args[0], completions, new ArrayList<>());
+        return new ArrayList<>(completions);
     }
 
     @Override
@@ -55,19 +58,35 @@ public class Color implements TabExecutor {
         UUID uuid = player.getUniqueId();
         PlayerInfo info = players.getInfo(uuid);
 
+        if (info == null) {
+            plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName().toLowerCase() + "'" + ChatColor.RED
+                    + " has no nickname.");
+
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                player.kickPlayer(ChatColor.RED
+                        + "Please rejoin, the nickname plugin somehow has failed to register your user and requires that you log in again. Sorry for the inconvenience");
+            });
+
+            return true;
+        }
+
         if (args.length != 1) {
             return false;
         }
 
-        ChatColor color = ChatColor.valueOf(args[0].toUpperCase());
+        try {
+            ChatColor color = ChatColor.valueOf(args[0].toUpperCase());
 
-        if ((new ArrayList<ChatColor>(allowedChatColors)).contains(color)) {
-            info.setColor(color);
-            info.applyTo(player);
-        } else {
-            sender.sendMessage("Invalid color");
+            if ((new ArrayList<ChatColor>(allowedChatColors)).contains(color)) {
+                info.setColor(color);
+                info.applyTo(player);
+                sender.sendMessage(ChatColor.GREEN + "Your color has been changed to " + color + color.name());
+            } else {
+                sender.sendMessage(ChatColor.RED + "Only color codes are allowed");
+            }
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage(ChatColor.RED + "Invalid color");
         }
-
         return true;
     }
 

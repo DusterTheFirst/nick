@@ -3,6 +3,7 @@ package com.dusterthefirst.nick;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -12,7 +13,7 @@ public class PlayerInfo implements ConfigurationSerializable {
     ChatColor color;
 
     public PlayerInfo(String nick) {
-        this.nick = nick;
+        this.nick = WordUtils.capitalize(nick.toLowerCase());
         this.color = null;
     }
 
@@ -29,6 +30,10 @@ public class PlayerInfo implements ConfigurationSerializable {
         } else {
             this.color = color;
         }
+    }
+
+    public void setNickname(String nick) {
+        this.nick = WordUtils.capitalize(nick.toLowerCase());
     }
 
     public String getNickname() {

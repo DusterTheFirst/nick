@@ -1,17 +1,34 @@
 name: Nick
-main: com.dusterthefirst.nick.Nick
+main: com.dusterthefirst.nick.NickPlugin
 version: "$$BUILD_NUMBER$$"
 api-version: 1.16
 api: []
+permissions:
+    "nick.command.setnick":
+        default: "op"
+        description: Ability to change the user's and other user's nicknames in game
+    "nick.command.setcolor":
+        default: true
+        description: Ability to change the user's color
+    "nick.command.who":
+        default: true
+        description: Ability to get the username or nickname of a player given a username or nickname
 commands:
-    reload-config:
-        description: Reload the configuration
-        usage: /<command>
     whois:
-        aliases: [who]
+        aliases:
+            - who
         description: Map nicknames to usernames and vice versa
         usage: /<command> <name>
+        permission: nick.command.who
     color:
-        aliases: [c]
+        aliases:
+            - c
         description: Set your display color
         usage: /<command> <color>
+        permission: nick.command.setcolor
+    nick:
+        aliases:
+            - "n"
+        description: Set the nickname of a player
+        usage: /<command> <player> <nickname>
+        permission: nick.command.setnick

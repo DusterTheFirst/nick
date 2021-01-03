@@ -46,11 +46,6 @@ public class Players {
 
     public void createInfo(UUID uuid, String nickname) {
         config.set(uuid.toString(), new PlayerInfo(nickname));
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public PlayerInfo getInfo(UUID uuid) {
@@ -59,7 +54,6 @@ public class Players {
 
     public void setInfo(UUID uuid, PlayerInfo info) {
         config.set(uuid.toString(), info);
-        save();
     }
 
     public void load() {

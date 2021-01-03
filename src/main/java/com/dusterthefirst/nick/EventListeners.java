@@ -12,10 +12,10 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class EventListeners implements Listener {
-    Nick plugin;
+    NickPlugin plugin;
     Players players;
 
-    public EventListeners(Nick plugin, Players players) {
+    public EventListeners(NickPlugin plugin, Players players) {
         this.plugin = plugin;
         this.players = players;
     }
@@ -33,7 +33,7 @@ public class EventListeners implements Listener {
         int colonPos = fullHostname.lastIndexOf(":");
 
         // Get the hostname and port
-        String hostname = fullHostname.substring(0, colonPos);
+        String hostname = fullHostname.substring(0, colonPos).toLowerCase();
         // String port = fullHostname.substring(colonPos);
 
         // Get the hostname postfix that should follow the nickname
@@ -43,7 +43,7 @@ public class EventListeners implements Listener {
         if (hostname.endsWith(hostnamePostfix)) {
             PlayerInfo previousInfo = players.getInfo(uuid);
 
-            String nickname = WordUtils.capitalize(hostname.replace(hostnamePostfix, "").replace("_", " "));
+            String nickname = WordUtils.capitalize(hostname.replace(hostnamePostfix, ""));
 
             if (previousInfo == null || previousInfo.nick.length() == 0) {
                 if (players.searchByNick(nickname) != null) {
@@ -65,13 +65,13 @@ public class EventListeners implements Listener {
             } else if (!previousInfo.nick.equals(nickname)) {
                 plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'"
                         + ChatColor.RED + " has attempted to join with the nickname " + ChatColor.GOLD + "'" + nickname
-                        + "'" + ChatColor.RED + " which does not match their previous nickname " + ChatColor.GOLD + "'"
+                        + "'" + ChatColor.RED + " which does not match their set nickname " + ChatColor.GOLD + "'"
                         + previousInfo.nick + "'");
                 event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
                         ChatColor.RED + "You have connected using the nickname " + ChatColor.GOLD + "'" + nickname + "'"
-                                + ChatColor.RED + " which does not match your previous nickname " + ChatColor.GOLD + "'"
+                                + ChatColor.RED + " which does not match your set nickname " + ChatColor.GOLD + "'"
                                 + previousInfo.nick + "'" + ChatColor.RED
-                                + ". Change back to the previous nickname or ask an admin to update your nickname");
+                                + ". Change back to the set nickname or ask an admin to update your nickname");
                 return;
             }
         } else {

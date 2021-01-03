@@ -1,7 +1,7 @@
 package com.dusterthefirst.nick;
 
-import com.dusterthefirst.nick.commands.Color;
-import com.dusterthefirst.nick.commands.ReloadConfig;
+import com.dusterthefirst.nick.commands.SetColor;
+import com.dusterthefirst.nick.commands.SetNick;
 import com.dusterthefirst.nick.commands.Whois;
 
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /** The main class for the nick plugin. */
-public class Nick extends JavaPlugin {
+public class NickPlugin extends JavaPlugin {
     Players players = new Players(getDataFolder());
 
     public void broadcast(String s) {
@@ -28,17 +28,17 @@ public class Nick extends JavaPlugin {
 
         saveDefaultConfig();
         players.load();
+        saveResource("README.md", true);
 
-        getCommand("reload-config").setExecutor(new ReloadConfig(this, players));
         getCommand("whois").setExecutor(new Whois(this, players));
-        getCommand("color").setExecutor(new Color(this, players));
+        getCommand("color").setExecutor(new SetColor(this, players));
+        getCommand("nick").setExecutor(new SetNick(this, players));
 
         getServer().getPluginManager().registerEvents(new EventListeners(this, players), this);
     }
 
     @Override
     public void onDisable() {
-        saveConfig();
         players.save();
     }
 }
