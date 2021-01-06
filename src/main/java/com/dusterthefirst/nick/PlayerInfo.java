@@ -3,8 +3,6 @@ package com.dusterthefirst.nick;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.comphenix.protocol.ProtocolManager;
-
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -19,7 +17,7 @@ public class PlayerInfo implements ConfigurationSerializable {
         this.color = null;
     }
 
-    public void applyTo(Player p, ProtocolManager protocolManager) {
+    public void applyTo(Player p) {
         p.setDisplayName(getNicknameColored());
         p.setPlayerListName(getNicknameColored());
         // try {
