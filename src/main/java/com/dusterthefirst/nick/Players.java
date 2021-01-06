@@ -22,7 +22,7 @@ public class Players {
             PlayerInfo playerInfo = (PlayerInfo) entry.getValue();
             UUID uuid = UUID.fromString(entry.getKey());
 
-            if (playerInfo.nick.toLowerCase().equals(nickname.toLowerCase())) {
+            if (playerInfo.getNickname().toLowerCase().equals(nickname.toLowerCase())) {
                 return uuid;
             }
         }

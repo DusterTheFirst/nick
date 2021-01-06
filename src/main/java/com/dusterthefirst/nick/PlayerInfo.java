@@ -9,8 +9,8 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 public class PlayerInfo implements ConfigurationSerializable {
-    String nick;
-    ChatColor color;
+    private String nick;
+    private ChatColor color;
 
     public PlayerInfo(String nick) {
         this.nick = WordUtils.capitalize(nick.toLowerCase());

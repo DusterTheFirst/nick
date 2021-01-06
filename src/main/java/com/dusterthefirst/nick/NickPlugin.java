@@ -1,5 +1,7 @@
 package com.dusterthefirst.nick;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.dusterthefirst.nick.commands.SetColor;
 import com.dusterthefirst.nick.commands.SetNick;
 import com.dusterthefirst.nick.commands.Whois;
@@ -35,6 +37,9 @@ public class NickPlugin extends JavaPlugin {
         getCommand("nick").setExecutor(new SetNick(this, players));
 
         getServer().getPluginManager().registerEvents(new EventListeners(this, players), this);
+
+        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        manager.addPacketListener(new PacketListener(this, players));
     }
 
     @Override

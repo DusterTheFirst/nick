@@ -97,7 +97,7 @@ public class Whois implements TabExecutor {
             UUID uuid = entry.getKey();
 
             String nick = playerInfo.getNickname();
-            String name = server.getPlayer(uuid).getName();
+            String name = server.getOfflinePlayer(uuid).getName();
 
             completions.add(nick);
             completions.add(name);

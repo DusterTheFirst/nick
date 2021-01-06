@@ -1,5 +1,6 @@
 package com.dusterthefirst.nick;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.WordUtils;
@@ -7,9 +8,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.TabCompleteEvent;
 
 public class EventListeners implements Listener {
     NickPlugin plugin;
@@ -45,7 +48,7 @@ public class EventListeners implements Listener {
 
             String nickname = WordUtils.capitalize(hostname.replace(hostnamePostfix, ""));
 
-            if (previousInfo == null || previousInfo.nick.length() == 0) {
+            if (previousInfo == null || previousInfo.getNickname().length() == 0) {
                 if (players.searchByNick(nickname) != null) {
                     plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'"
                             + ChatColor.RED + " has attempted to join with the nickname " + ChatColor.GOLD + "'"
@@ -62,15 +65,15 @@ public class EventListeners implements Listener {
                         + ") joined with nickname: " + ChatColor.YELLOW + nickname;
 
                 plugin.broadcast(message);
-            } else if (!previousInfo.nick.equals(nickname)) {
+            } else if (!previousInfo.getNickname().equals(nickname)) {
                 plugin.broadcast(ChatColor.RED + "Player " + ChatColor.GOLD + "'" + player.getName() + "'"
                         + ChatColor.RED + " has attempted to join with the nickname " + ChatColor.GOLD + "'" + nickname
                         + "'" + ChatColor.RED + " which does not match their set nickname " + ChatColor.GOLD + "'"
-                        + previousInfo.nick + "'");
+                        + previousInfo.getNickname() + "'");
                 event.disallow(PlayerLoginEvent.Result.KICK_OTHER,
                         ChatColor.RED + "You have connected using the nickname " + ChatColor.GOLD + "'" + nickname + "'"
                                 + ChatColor.RED + " which does not match your set nickname " + ChatColor.GOLD + "'"
-                                + previousInfo.nick + "'" + ChatColor.RED
+                                + previousInfo.getNickname() + "'" + ChatColor.RED
                                 + ". Change back to the set nickname or ask an admin to update your nickname");
                 return;
             }
@@ -130,5 +133,35 @@ public class EventListeners implements Listener {
 
         if (info != null)
             event.setQuitMessage(ChatColor.YELLOW + info.getNicknameColored() + ChatColor.YELLOW + " left the game");
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player deadPlayer = event.getEntity();
+        UUID deadPlayerUuid = deadPlayer.getUniqueId();
+
+        String deathMessage = event.getDeathMessage().replace(deadPlayer.getName(),
+                players.getInfo(deadPlayerUuid).getNicknameColored());
+
+        Player killer = deadPlayer.getKiller();
+
+        if (killer != null) {
+            UUID killerUuid = killer.getUniqueId();
+
+            deathMessage = deathMessage.replace(killer.getName(), players.getInfo(killerUuid).getNicknameColored());
+        }
+
+        // event.getEntity().sendMessage("L");
+        event.setDeathMessage(deathMessage);
+    }
+
+    @EventHandler
+    public void onTabComplete(TabCompleteEvent event) {
+        List<String> completions = event.getCompletions();
+        for (int i = 0; i < completions.size(); i++) {
+            completions.set(i, ChatColor.stripColor(completions.get(i)));
+            plugin.getLogger().info(completions.get(i));
+        }
+        event.setCompletions(completions);
     }
 }

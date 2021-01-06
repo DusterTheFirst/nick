@@ -3,6 +3,7 @@ main: com.dusterthefirst.nick.NickPlugin
 version: "$$BUILD_NUMBER$$"
 api-version: 1.16
 api: []
+depend: [ProtocolLib]
 permissions:
     "nick.command.setnick":
         default: "op"
