@@ -1,10 +1,8 @@
 package com.dusterthefirst.nick;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 
 import org.apache.commons.lang.WordUtils;
