@@ -1,7 +1,11 @@
 package com.dusterthefirst.nick;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolManager;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -17,9 +21,14 @@ public class PlayerInfo implements ConfigurationSerializable {
         this.color = null;
     }
 
-    public void applyTo(Player p) {
+    public void applyTo(Player p, ProtocolManager protocolManager) {
         p.setDisplayName(getNicknameColored());
         p.setPlayerListName(getNicknameColored());
+        // try {
+        //     protocolManager.sendServerPacket(p, protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO));
+        // } catch (InvocationTargetException e) {
+        //     e.printStackTrace();
+        // }
         // player.setCustomName(info.getNicknameColored());
         // player.setCustomNameVisible(true);
     }

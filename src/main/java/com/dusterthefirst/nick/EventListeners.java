@@ -1,6 +1,5 @@
 package com.dusterthefirst.nick;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.WordUtils;
@@ -12,7 +11,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.TabCompleteEvent;
 
 public class EventListeners implements Listener {
     NickPlugin plugin;
@@ -155,13 +153,13 @@ public class EventListeners implements Listener {
         event.setDeathMessage(deathMessage);
     }
 
-    @EventHandler
-    public void onTabComplete(TabCompleteEvent event) {
-        List<String> completions = event.getCompletions();
-        for (int i = 0; i < completions.size(); i++) {
-            completions.set(i, ChatColor.stripColor(completions.get(i)));
-            plugin.getLogger().info(completions.get(i));
-        }
-        event.setCompletions(completions);
-    }
+    // @EventHandler
+    // public void onTabComplete(TabCompleteEvent event) {
+    //     List<String> completions = event.getCompletions();
+    //     for (int i = 0; i < completions.size(); i++) {
+    //         completions.set(i, ChatColor.stripColor(completions.get(i)));
+    //         plugin.getLogger().info(completions.get(i));
+    //     }
+    //     event.setCompletions(completions);
+    // }
 }
